@@ -9,12 +9,14 @@
 import UIKit
 import AVFoundation
 class PlaySoundsViewController: UIViewController {
-    var audioPlayer:AVAudioPlayer!
+    
+    var audioPlayer: AVAudioPlayer!
     var receivedAudio:RecordedAudio!
     //Declared globally within PlaySoundsViewController
-    var audioEngine:AVAudioEngine!
+    var audioEngine: AVAudioEngine!
     var audioFile:AVAudioFile!
-    func play(sp: Float, frombegin: Bool){
+    
+    func play(sp: Float, frombegin: Bool) {
         audioPlayer.stop()
         audioPlayer.rate = sp;
         if frombegin {
@@ -22,6 +24,12 @@ class PlaySoundsViewController: UIViewController {
         }
         
         audioPlayer.play()
+    }
+    
+    func stopAllAudio() {
+        audioPlayer.stop()
+        audioEngine.stop()
+        audioEngine.reset()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +41,6 @@ class PlaySoundsViewController: UIViewController {
         
         audioEngine = AVAudioEngine()
         audioFile = AVAudioFile(forReading: receivedAudio.filePathUrl, error: nil)
-    
 
     }
 
@@ -56,15 +63,11 @@ class PlaySoundsViewController: UIViewController {
         play(2.0, frombegin: true)
     }
     @IBAction func stopAudio(sender: UIButton) {
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAllAudio()
     }
     
     func playAudioWithVariablePitch(pitch: Float){
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAllAudio()
         
         let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
@@ -83,9 +86,7 @@ class PlaySoundsViewController: UIViewController {
     }
     
     func playAudioWithVariableEcho(delyTime: NSTimeInterval, feedback: Float){
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAllAudio()
         
         let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
@@ -112,14 +113,14 @@ class PlaySoundsViewController: UIViewController {
         playAudioWithVariablePitch(-1000)
     }
     @IBAction func playReverbAudio(sender: UIButton) {
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAllAudio()
         
         let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
         
         let reverbEffect = AVAudioUnitReverb()
+        reverbEffect.loadFactoryPreset(.Cathedral)
+        reverbEffect.wetDryMix = 50
         audioEngine.attachNode(reverbEffect)
         
         audioEngine.connect(audioPlayerNode, to: reverbEffect, format: nil)
@@ -133,14 +134,4 @@ class PlaySoundsViewController: UIViewController {
     @IBAction func playEchoAudio(sender: UIButton) {
         playAudioWithVariableEcho(1.0, feedback: 80.0)
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

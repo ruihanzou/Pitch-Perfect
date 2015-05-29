@@ -11,16 +11,18 @@ import AVFoundation
 class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBOutlet weak var tapToRecord: UILabel!
-    @IBOutlet weak var recordingInProgress: UILabel!
     @IBOutlet weak var stopButton: UIButton!
     @IBOutlet weak var recordButton: UIButton!
     @IBOutlet weak var pauseButton: UIButton!
-    @IBOutlet weak var resume: UILabel!
     @IBOutlet weak var resumeButton: UIButton!
+    let tapToRecordText = "Tap to record"
+    let recordingInProgress = "Recording..."
+    let resume = "Resume"
+    
     //@IBOutlet weak var pauseButton: UIButton!
     
-    var audioRecorder:AVAudioRecorder!
-    var recordedAudio:RecordedAudio!
+    var audioRecorder: AVAudioRecorder!
+    var recordedAudio: RecordedAudio!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,26 +38,28 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         stopButton.hidden = true
         //Hide the pause button
         pauseButton.hidden = true
-        //Hide the resume text
-        resume.hidden = true
         //Hide the resume button
         resumeButton.hidden = true
         //SHOW the record button
         recordButton.hidden = false
+        //Change the tapToRecord text
+        tapToRecord.text = tapToRecordText
         
     }
 
     @IBAction func recordAudio(sender: UIButton) {
         //TODO: HIDE record button
         recordButton.hidden = true
+        
         //TODO: SHOW pause button
         pauseButton.hidden = false
-        //TODO: HIDE TEXT "Tap to Record"
-        tapToRecord.hidden = true
+        
+        //TODO: Change TEXT "Tap to Record"
+        tapToRecord.text = recordingInProgress
+        
         //TODO: Show the STOP button
         stopButton.hidden = false
-        //TODO: SHOW TEXT "reording in progress"
-        recordingInProgress.hidden = false
+        
         //TODO: Record the user's voice
         let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as! String
         
@@ -102,12 +106,6 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     }
     @IBAction func stopAudio(sender: UIButton) {
         //TODO: Stop recording
-        recordingInProgress.hidden = true
-        pauseButton.hidden = true
-        recordButton.hidden = false
-        tapToRecord.hidden = false
-        resume.hidden = true
-        resumeButton.hidden = false
         audioRecorder.stop()
         var audioSession = AVAudioSession.sharedInstance()
         audioSession.setActive(false, error: nil)
@@ -117,8 +115,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     @IBAction func pauseAudio(sender: UIButton) {
          //TODO: pause the audio recording
         audioRecorder.pause()
-        recordingInProgress.hidden = true
-        resume.hidden = false
+        tapToRecord.text = resume 
         pauseButton.hidden = true
         resumeButton.hidden = false
         
@@ -126,10 +123,9 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     @IBAction func resumeAudio(sender: UIButton) {
         //TODO: resume the audio recording
         audioRecorder.record()
-        resume.hidden = true
         resumeButton.hidden = true
         pauseButton.hidden = false
-        recordingInProgress.hidden = false
+        tapToRecord.text = recordingInProgress
     }
 }
 
